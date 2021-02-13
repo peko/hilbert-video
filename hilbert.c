@@ -15,7 +15,6 @@ typedef struct {
     byte b;
 } rgb;
 
-rgb empty_rgb = {0,0,0};
 
 //rotate/flip a quadrant appropriately
 void rot(uint32_t n, uint32_t *x, uint32_t *y, uint32_t rx, uint32_t ry) {
@@ -62,8 +61,10 @@ void d2xy(uint32_t n, uint32_t d, uint32_t *x, uint32_t *y) {
 #define BUF_SIZE 65536
 int main(int argc, char** argv){
 
+    rgb empty_rgb[256]={{128,64,32}};
     // Nucleotide position
     uint32_t p = 0;
+
     // Bufs for genome chunk an image
     rgb buf[BUF_SIZE];
     rgb png[BUF_SIZE];
@@ -85,20 +86,28 @@ int main(int argc, char** argv){
             uint32_t x, y, tx, ty, px, py;
             // hilbert pos to x, y
             d2xy(IMG_SIZE, p, &x, &y);
+
             // tile num
-            tx = x/256;
-            ty = y/256;
+            tx = x/16;
+            ty = y/16;
             sprintf(filename, "map/10-%u-%u.png", tx, ty);
-            for(uint32_t i=0; i<BUF_SIZE; i++) {
+            for(uint32_t i=0; i<BUF_SIZE; i+=256) {
                 d2xy(IMG_SIZE, p, &x, &y);
+
                 // pixel pos
-                px = x%256;
-                py = y%256;
+                px = (x%16)*16;
+                py = (y%16)*16;
+                // printf("%u %u %u\n", p, x, y);
+
                 uint32_t j = px+py*256;
-                rgb c = i<s ? buf[i] : empty_rgb;
-                png[j] = c;
+                // copy png line by line
+                for(int l = 0; l<16; l++) {
+                    rgb* c = (i<s) ? (&buf[i+l*16]) : (&empty_rgb[l*16]);
+                    memcpy(&png[j+l*256], c, 16*3);
+                }
                 p++;
             }
+            // break;
             stbi_write_png(filename, 256, 256, 3, png, 256*3);
         };
         fclose(f);
