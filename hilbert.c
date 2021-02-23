@@ -90,7 +90,7 @@ int main(int argc, char** argv){
             // tile num
             tx = x/16;
             ty = y/16;
-            sprintf(filename, "map/10-%u-%u.png", tx, ty);
+            sprintf(filename, "%s/10-%u-%u.png", argv[2], tx, ty);
             for(uint32_t i=0; i<BUF_SIZE; i+=256) {
                 d2xy(IMG_SIZE, p, &x, &y);
 
