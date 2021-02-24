@@ -145,6 +145,13 @@ map.on('baselayerchange', (e)=> {
   cover.setUrl(`img/${e.name}.jpg`)
 });
 
+
+southWest = map.unproject([0, 0], map.getMaxZoom()-1);
+northEast = map.unproject([2048, 2048], map.getMaxZoom()-1);
+bnd = new L.LatLngBounds(southWest, northEast);
+let curve = L.imageOverlay(`img/hilbert.gif`, bnd, {opacity:0.5});
+// curve.addTo(map);
+
 // Канвас маски
 var s_cvs = L.DomUtil.create('canvas', 'leaflet-tile');
 s_cvs.width  = 512;
@@ -273,6 +280,11 @@ map.addEventListener('boxselectend', (e) => {
     
 // Клавиатура
 window.addEventListener("keypress", function(e) {
+  if(e.key == 'h') {
+    if(map.hasLayer(curve)) map.removeLayer(curve);
+    else map.addLayer(curve);
+    return;
+  };
   var pressedKey = Number(e.key);
   // If button pressed is not a number, return.
   if (isNaN(pressedKey)) return;
