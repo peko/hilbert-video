@@ -62,10 +62,8 @@ void d2xy(uint32_t n, uint32_t d, uint32_t *x, uint32_t *y) {
 int main(int argc, char** argv){
 
     rgb empty_rgb[256]={{128,64,32}};
-    // Nucleotide position
     uint32_t p = 0;
 
-    // Bufs for genome chunk an image
     rgb buf[BUF_SIZE];
     rgb png[BUF_SIZE];
     // Output tile name 
